@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require_relative 'node'
 
 class Tree
@@ -28,4 +30,4 @@ end
 
 new = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 
-new.pretty_print(node = @root, prefix = '', is_left = true)
+new.pretty_print
