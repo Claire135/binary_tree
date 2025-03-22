@@ -3,6 +3,8 @@
 require_relative 'node'
 
 class Tree
+  attr_accessor :root
+
   def initialize(array)
     @root = build_tree(array)
   end
@@ -20,10 +22,32 @@ class Tree
     root
   end
 
-  def pretty_print(node = @root, prefix = '', is_left = true)
-    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
-    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
-    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  def preorder(node, result = [])
+    return result if node.nil?
+  
+    result << node.data  # root
+    preorder(node.left, result)  # go Left
+    preorder(node.right, result)  # go Right
+  
+    result
+  end
+
+  def inorder(node, result = [])
+    return result if node.nil?
+    inorder(node.left, result)  # go left
+    result << node.data  # root
+    inorder(node.right, result)  # go right
+    
+    result
+  end
+
+  def postorder(node, result = [])
+    return result if node.nil?
+    postorder(node.left, result)  # go left
+    postorder(node.right, result)  # go right
+    result << node.data  # root
+
+    result
   end
 
   def insert(new_value, node = @root)
@@ -44,7 +68,6 @@ class Tree
     end
   end
   
-
   def delete(value, node = @root)
     return node if node.nil?
 
@@ -87,6 +110,26 @@ class Tree
     [height(node.left), height(node.right)].max + 1
   end
 
+  def display_height
+    puts height(@root)
+  end
+
+  def depth(node, current = @root, depth = 0)
+    return -1 if current.nil?  # Node not found
+    return depth if current == node  # Found the node
+    
+    # Search in the left subtree
+    left_depth = depth(current.left, node, depth + 1)
+    return left_depth if left_depth != -1  # If node found in left subtree
+    
+    # Search in the right subtree
+    right_depth = depth(current.right, node, depth + 1)
+    return right_depth if right_depth != -1  # If node found in right subtree
+    
+    # If the node is not found
+    -1
+  end
+
   def rebalance
     sorted_nodes = inorder_traversal(@root)  # Get sorted array of values
     @root = build_tree(sorted_nodes)         # Rebuild the tree
@@ -101,6 +144,12 @@ class Tree
   
     values
   end
+
+  def pretty_print(node = @root, prefix = '', is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  end
   
 end
 
@@ -113,8 +162,13 @@ new.insert(3500)
 new.insert(380)
 new.pretty_print
 p new.balanced?
+new.display_height
+p new.depth(new.root.left)
 new.delete(7)
 new.rebalance
 new.pretty_print
 p new.balanced?
-
+new.display_height
+p new.preorder(new.root)
+p new.inorder(new.root)
+p new.postorder(new.root)
