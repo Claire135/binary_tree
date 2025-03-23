@@ -5,6 +5,8 @@ require_relative 'lib/tree'
 
 new = Tree.new(Array.new(15) { rand(1..100) })
 new.root
+p new.level_order { |value| puts value }
+p new.level_order
 new.insert(350)
 new.insert(359)
 new.insert(356)
